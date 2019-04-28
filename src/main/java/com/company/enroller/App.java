@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.company.enroller.security.ParticipantProvider;
+
 @SpringBootApplication
 public class App {
 
@@ -16,5 +18,10 @@ public class App {
     @Bean
     public PasswordEncoder passwordEncoder() {
     	return new BCryptPasswordEncoder();
+    }
+    
+    @Bean
+    public ParticipantProvider participantProvider() {
+    	return participantProvider();//??
     }
 }

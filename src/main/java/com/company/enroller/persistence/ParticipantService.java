@@ -1,6 +1,8 @@
 package com.company.enroller.persistence;
 
 import com.company.enroller.model.Participant;
+import com.company.enroller.security.ParticipantProvider;
+
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +17,9 @@ public class ParticipantService {
     
     @Autowired
     PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    ParticipantProvider participantProvider;
 
     public ParticipantService() {
         connector = DatabaseConnector.getInstance();
