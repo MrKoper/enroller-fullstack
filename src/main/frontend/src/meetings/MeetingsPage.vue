@@ -2,7 +2,7 @@
   <div>
     <new-meeting-form @added="addNewMeeting($event)"></new-meeting-form>
 
-    <span v-if="meetings.length == 0">
+    <span v-if="meetings.length === 0">
                Brak zaplanowanych spotkań.
            </span>
     <h3 v-else>
@@ -31,17 +31,46 @@
         },
         methods: {
             addNewMeeting(meeting) {
-                this.meetings.push(meeting);
+                this.$http.post('meetings', meeting)
+                    .then(response => {
+                        this.meetings.push(response.body);
+                    });
+                this.getMeetings();
             },
             addMeetingParticipant(meeting) {
-                meeting.participants.push(this.username);
+                // meeting.participants.push(this.username);
+                let url = 'meetings/' + meeting.id.toString() + '/participants';
+                this.$http.post(url, {params: {login: this.username}}) //meeting.id - undefined?
+                    .then(response => {
+                        meeting.participants.push(response.body, this.username)
+                    });
+                this.getMeetings();
             },
             removeMeetingParticipant(meeting) {
+                this.$http.delete('meetings/' + meeting.id.toString() + "/participants?login=", this.username) // //meeting.id - undefined?
+                    .then(response => {
+                        meeting.participants.splice(meeting.participants.indexOf(this.username), 1)
+                    });
                 meeting.participants.splice(meeting.participants.indexOf(this.username), 1);
+                this.getMeetings();
             },
             deleteMeeting(meeting) {
+                this.$http.delete('meetings/' + meeting.id.toString())
+                    .then(response => {
+                        this.meetings.splice(this.meetings.indexOf(meeting), 1);
+                    });
                 this.meetings.splice(this.meetings.indexOf(meeting), 1);
+                this.getMeetings();
+            },
+            getMeetings() {
+                this.$http.get('meetings')
+                    .then(response => {
+                        this.meetings = response.body;
+                    })
             }
-        }
+        },
+        mounted() {
+            this.$nextTick(this.getMeetings());
+        },
     }
 </script>
